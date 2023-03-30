@@ -1,0 +1,24 @@
+task downloadMovenetLightningModel(type: DownloadUrlTask) {
+    sourceUrl = "https://tfhub.dev/google/lite-model/movenet/singlepose/lightning/tflite/float16/4?lite-format=tflite"
+    target = file("src/main/assets/movenet_lightning.fp16.tflite")
+}
+
+task downloadModel {
+    dependsOn downloadMovenetLightningModel
+}
+
+class DownloadUrlTask extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+        if (target.exists()) return
+        ant.get(src: sourceUrl, dest: target)
+    }
+}
+
+preBuild.dependsOn downloadModel
